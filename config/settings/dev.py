@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from .base import *  
 
-SECRET_KEY = os.getenv("SECRET_KEY")  
+SECRET_KEY = env.str("SECRET_KEY", "*****")  
 
 
 THIRD_PARTY_APPS = [
@@ -22,7 +22,7 @@ THIRD_PARTY_APPS = [
 
 
 LOCAL_APPS = [
-    "gpahelper.accounts",
+    "core.accounts",
 ]
 
 INSTALLED_APPS += THIRD_PARTY_APPS + LOCAL_APPS
@@ -58,8 +58,8 @@ SIMPLE_JWT = {
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {
-            "client_id": os.getenv('CLIENT_ID'),  
-            "secret": os.getenv('CLIENT_SECRET'),                                     
+            "client_id": env.str('CLIENT_ID',"********"),  
+            "secret": env.str('CLIENT_SECRET',"*******"),                                     
         },
         "SCOPE": [
             "profile",
