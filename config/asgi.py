@@ -3,16 +3,15 @@ ASGI config for gpahelper project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
-For more information on this file, see
-https://docs.djangoproject.com/en/4.2/howto/deployment/asgi/
 """
 
 import os
-from dotenv import load_dotenv
-load_dotenv(override=True)
 
 from django.core.asgi import get_asgi_application
+from . import env
 
-os.environ['DJANGO_SETTINGS_MODULE'] = os.getenv('DJANGO_SETTINGS_MODULE')
+os.environ.setdefault(
+    "DJANGO_SETTINGS_MODULE", env.str("DJANGO_SETTINGS_MODULE", "config.settings.dev")
+)
 
-application = get_asgi_application()
+app = get_asgi_application()

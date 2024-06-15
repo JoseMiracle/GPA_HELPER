@@ -1,4 +1,4 @@
-from gpahelper.accounts.api.views import GoogleLoginView
+from core.accounts.api.views import GoogleLoginView
 from django.urls import path
 
 

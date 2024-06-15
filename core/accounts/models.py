@@ -1,5 +1,5 @@
 from django.db import models
-from gpahelper.utils.base_class import BaseModel
+from core.utils.base_class import BaseModel
 from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
