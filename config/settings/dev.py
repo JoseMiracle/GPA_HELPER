@@ -8,15 +8,21 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "rest_framework.authtoken",
     "rest_framework_simplejwt.token_blacklist",
     "drf_standardized_errors",
     "corsheaders",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    'allauth.socialaccount.providers.google',  
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
 ]
 
 
 LOCAL_APPS = [
-    # "sigma.authentication",
-    # "sigma.users",
+    "gpahelper.accounts",
 ]
 
 INSTALLED_APPS += THIRD_PARTY_APPS + LOCAL_APPS
@@ -29,6 +35,13 @@ REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
 }
 
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'GPA HELPER',
+    'DESCRIPTION': 'GPA HELPER FOR STUDENT',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}
 
 # SIMPLE_JWT_SETTINGS
 SIMPLE_JWT = {
@@ -40,3 +53,29 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Token",),
 }
 
+
+# SOCIAL_LOGIN_SETTINGS
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": os.getenv('CLIENT_ID'),  
+            "secret": os.getenv('CLIENT_SECRET'),                                     
+        },
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+        "VERIFIED_EMAIL": True,
+    },
+}
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
