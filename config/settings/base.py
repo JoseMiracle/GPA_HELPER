@@ -68,7 +68,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 
-if env.bool("PRODUCTION", False):
+if not env.bool("IS_PRODUCTION", False):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -137,3 +137,4 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 # ___________ API AND VERSIONING ____________
 API_VERSION = env.str("API_VERSION", default="1")
 
+SITE_ID=1
