@@ -11,7 +11,7 @@ from django.core.asgi import get_asgi_application
 from . import env
 
 os.environ.setdefault(
-    "DJANGO_SETTINGS_MODULE", env.str("DJANGO_SETTINGS_MODULE", "config.settings.dev")
+    "DJANGO_SETTINGS_MODULE", env.str("DJANGO_SETTINGS_MODULE", "config.settings.prod")
 )
 
 app = get_asgi_application()
