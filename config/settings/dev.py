@@ -1,17 +1,14 @@
 from .base import *
-from datetime import timedelta
-
-from .base import *  
 
 SECRET_KEY = env.str("SECRET_KEY", "*****")  
 
 
 THIRD_PARTY_APPS = [
-    "rest_framework",
-    "rest_framework.authtoken",
-    "rest_framework_simplejwt.token_blacklist",
+    #"rest_framework",
+    #"rest_framework.authtoken",
+    #"rest_framework_simplejwt.token_blacklist",
     "drf_standardized_errors",
-    "corsheaders",
+    #"corsheaders",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -33,14 +30,6 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
-}
-
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'GPA HELPER',
-    'DESCRIPTION': 'GPA HELPER FOR STUDENT',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-    # OTHER SETTINGS
 }
 
 # SIMPLE_JWT_SETTINGS
@@ -78,4 +67,4 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
-AUTH_USER_MODEL = 'accounts.CustomUser'
+#AUTH_USER_MODEL = 'accounts.CustomUser'

@@ -1,5 +1,9 @@
-from .dev import *
+from .base import *
 from corsheaders.defaults import default_headers as cors_default_headers
+
+PROJECT_APPS = ["core.user.apps.UserConfig"]
+
+INSTALLED_APPS += PROJECT_APPS
 
 
 # Corsheaders
@@ -22,9 +26,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
-    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
@@ -62,3 +64,20 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_LIFETIME": timedelta(days=7),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=7),
 }
+
+
+# _____________GOOGLE____________________________
+GOOGLE_OAUTH_CLIENT_CONFIG = {
+    "web": {
+        "client_id": env.str("GOOGLE_OAUTH_CLIENT_ID", default="*******"),
+        "project_id": env.str("GOOGLE_OAUTH_PROJECT_ID", default="*******"),
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret": env.str("GOOGLE_OAUTH_CLIENT_SECRET", default="*******"),
+        "redirect_uris": env.list("GOOGLE_OAUTH_REDIRECT_URIS", default=[]),
+        "javascript_origins": env.list("GOOGLE_OAUTH_JAVASCRIPT_ORIGINS", default=[]),
+    }
+}
+
+AUTH_USER_MODEL = "user.User"

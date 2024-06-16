@@ -5,6 +5,8 @@ Django settings for gpahelper project.
 import os
 from pathlib import Path
 from .. import env
+from datetime import timedelta
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -32,6 +34,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "rest_framework",
+    "rest_framework_simplejwt.token_blacklist",
+    "corsheaders",
+    "drf_spectacular",
+    "cloudinary_storage",
+    "cloudinary",
 ]
 
 MIDDLEWARE = [
@@ -138,3 +146,22 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 API_VERSION = env.str("API_VERSION", default="1")
 
 SITE_ID=1
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'GPA HELPER',
+    'DESCRIPTION': 'GPA HELPER FOR STUDENT',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}
+
+
+# Cloudinary
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": env.str("CLOUDINARY_CLOUD_NAME", default="****"),
+    "API_KEY": env.str("CLOUDINARY_API_KEY", default="****"),
+    "API_SECRET": env.str("CLOUDINARY_API_SECRET", default="****"),
+}
+MEDIA_URL = "/media/"
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
