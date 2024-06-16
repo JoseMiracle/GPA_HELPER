@@ -4,11 +4,7 @@ services:
     image: postgres:latest
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_DB=buddy
-      - POSTGRES_USER=debug@buddy
-      - POSTGRES_PASSWORD=debug@BuddyGPA
-      - "POSTGRES_HOST_AUTH_METHOD=trust"
+    
 
   backend:
     build:
