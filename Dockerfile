@@ -21,11 +21,14 @@ rm -rf /root/.cache/
 COPY . /code/
 
 # Set the port number as an environment variable
-ARG PORT=8000
+ARG PORT=80
 ENV PORT $PORT
 
 # Expose the given port
 EXPOSE $PORT
 
-# Use gunicorn on the given port
-CMD gunicorn --bind :$PORT --workers 2 config.wsgi
+# Copy start.sh and give execution permissions
+COPY start.sh /code/start.sh
+RUN chmod +x /code/start.sh
+
+CMD ["/code/start.sh"]
