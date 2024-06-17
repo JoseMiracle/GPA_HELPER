@@ -13,7 +13,7 @@ WORKDIR /code
 COPY requirements.txt /tmp/requirements.txt
 
 RUN set -ex && \
-pip install --upgrade pip && \
+pip install --no-cache-dir --upgrade pip && \
 pip install -r /tmp/requirements.txt && \
 rm -rf /root/.cache/
 
@@ -31,4 +31,5 @@ EXPOSE $PORT
 COPY start.sh /code/start.sh
 RUN chmod +x /code/start.sh
 
-CMD ["/code/start.sh"]
+# Use start.sh as the entry point
+ENTRYPOINT ["/code/start.sh"]
