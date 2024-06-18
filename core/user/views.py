@@ -196,7 +196,7 @@ class UserPersonalityViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserPersonalitySerializer
     http_method_names = ['post', 'get']
-
+    
     @extend_schema(
         examples=[
             OpenApiExample(
@@ -217,19 +217,15 @@ class UserPersonalityViewSet(viewsets.GenericViewSet):
                 "Response example",
                 response_only=True,
                 value={
-                    "status": "Ok",
-                    "code": 201,
-                    "data": {
-                        "personality_test": "https://berserk-blood-majestic-mice-production.pipeops.app/personality-test",
-                        "study_style": "At Night",
-                        "other_activities": {
-                            "Gym": {
-                                "date": "10-10-2023",
-                                "time": "2:00 pm"
-                            }
+                    "personality_test": "https://berserk-blood-majestic-mice-production.pipeops.app/personality-test",
+                    "study_style": "At Night",
+                    "other_activities": {
+                        "Gym": {
+                            "date": "10-10-2023",
+                            "time": "2:00pm"
                         }
                     }
-                },
+                }
             )
         ]
     )
@@ -260,6 +256,27 @@ class UserAcademyGoalViewSet(viewsets.GenericViewSet):
     serializer_class = serializers.AcademicGoalSerializer
     http_method_names = ['post', 'get']
 
+
+    @extend_schema(
+        examples=[
+            OpenApiExample(
+                "Request example",
+                request_only=True,
+                value={
+                    "previous_session_gpa": "3.29",
+                    "expected_current_session_gpa": "3.59"
+                }
+            ),
+            OpenApiExample(
+                "Response example",
+                response_only=True,
+                value={    
+                    "previous_session_gpa": "3.29",
+                    "expected_current_session_gpa": "3.59"
+                }
+            )
+        ]
+    )
     @decorators.action(detail=False, methods=['post'])
     def create_user_academic_goal(self, request, *args, **kwargs):
         """Create user's academic goal"""
