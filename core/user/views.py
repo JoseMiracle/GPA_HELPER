@@ -196,7 +196,7 @@ class UserPersonalityViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserPersonalitySerializer
     http_method_names = ['post', 'get']
-    
+
     @extend_schema(
         examples=[
             OpenApiExample(
@@ -239,7 +239,23 @@ class UserPersonalityViewSet(viewsets.GenericViewSet):
 
         return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
-
+    @extend_schema(
+    examples=[
+        OpenApiExample(
+            "Request example",
+            response_only=True,
+            value={
+                "personality_test": "https://berserk-blood-majestic-mice-production.pipeops.app/personality-test",
+                "study_style": "At Night",
+                "other_activities": {
+                    "Gym": {
+                        "date": "10-10-2023",
+                        "time": "2:00pm"
+                    }
+                }
+            }
+        ),
+    ])
     @decorators.action(detail=False, methods=['get'])
     def user_personality(self, request):
         """Retrieve user's personality"""
