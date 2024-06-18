@@ -1,20 +1,21 @@
 import re
 
 from django.conf import settings
-
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from rest_framework import viewsets, decorators, status, response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiExample
 
-from core.user.models import User
+from core.user.models import User, AcademicGoal
 from core.user import serializers
 from core.utils.mixins import CustomRequestDataValidationMixin, CountListResponseMixin
 from core.user.models import UserSession
 from core.utils import permissions, exceptions, google_oauth
-
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import NotFound
 
 """def receive_auth_test(request):
     print(request.data)
@@ -189,3 +190,91 @@ class AuthViewSet(
         serializer.save()
         serializer = serializers.Retrieve(instance=request.user)
         return response.Response(status=status.HTTP_200_OK, data=serializer.data)
+
+
+class UserPersonalityViewSet(viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.UserPersonalitySerializer
+    http_method_names = ['post', 'get']
+
+    @extend_schema(
+        examples=[
+            OpenApiExample(
+                "Request example",
+                request_only=True,
+                value={
+                    "personality_test": "https://berserk-blood-majestic-mice-production.pipeops.app/personality-test",
+                    "study_style": "At Night",
+                    "other_activities": {
+                        "Gym": {
+                            "date": "10-10-2023",
+                            "time": "2:00pm"
+                        }
+                    }
+                }
+            ),
+            OpenApiExample(
+                "Response example",
+                response_only=True,
+                value={
+                    "status": "Ok",
+                    "code": 201,
+                    "data": {
+                        "personality_test": "https://berserk-blood-majestic-mice-production.pipeops.app/personality-test",
+                        "study_style": "At Night",
+                        "other_activities": {
+                            "Gym": {
+                                "date": "10-10-2023",
+                                "time": "2:00 pm"
+                            }
+                        }
+                    }
+                },
+            )
+        ]
+    )
+    @decorators.action(detail=False, methods=['post'])
+    def create_user_personality(self, request, *args, **kwargs):
+        """Create user's personality"""
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=self.request.user)
+
+        return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+
+    @decorators.action(detail=False, methods=['get'])
+    def user_personality(self, request):
+        """Retrieve user's personality"""
+
+        user = request.user
+        user_personality = user.personality     
+        serializer = self.get_serializer(instance=user_personality)
+
+        return response.Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class UserAcademyGoalViewSet(viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.AcademicGoalSerializer
+    http_method_names = ['post', 'get']
+
+    @decorators.action(detail=False, methods=['post'])
+    def create_user_academic_goal(self, request, *args, **kwargs):
+        """Create user's academic goal"""
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=self.request.user)
+
+        return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+    @decorators.action(detail=False, methods=['get'])
+    def user_recent_academic_goal(self, request):
+        """Retrieve user's recent academic goal"""
+
+        user_academy_goal = AcademicGoal.objects.filter(user=request.user).order_by('-date_added').first()
+        serializer = self.get_serializer(instance=user_academy_goal)
+
+        return response.Response(data=serializer.data, status=status.HTTP_200_OK)

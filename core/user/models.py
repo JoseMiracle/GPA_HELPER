@@ -102,3 +102,23 @@ class UserSession(BaseModelMixin):
 
     def __str__(self):
         return f"{self.user} - {self.last_activity}"
+
+
+
+class UserPersonality(BaseModelMixin):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='personality')
+    personality_test = models.URLField(max_length=200)
+    study_style = models.CharField(max_length=40, null=False, blank=False)
+    other_activities = models.JSONField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user}:{self.study_style}"
+    
+
+class AcademicGoal(BaseModelMixin):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='academic_goals')
+    previous_session_gpa = models.DecimalField(max_digits=5, decimal_places=4, null=False, blank=False, default='0.00')
+    expected_current_session_gpa = models.DecimalField(max_digits=5, decimal_places=4, null=False, blank=False)
+
+    def __str__(self):
+        return f"{self.user}: {self.expected_current_session_gpa}"
