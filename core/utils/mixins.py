@@ -31,17 +31,20 @@ class CustomRequestDataValidationMixin(ABC):
                 else:
                     data = request.data
                 required_fields_res = self.get_required_fields()
-                assert callable(required_fields_res) or getattr(
-                    required_fields_res, "__iter__"
-                ), "'get_required_fields' method must return an iterable or callable"
-                if callable(required_fields_res):
-                    _, msg = required_fields_res(data)
-                    if not _:
-                        errors.append(msg)
-                else:
-                    for field in self.get_required_fields():
-                        if not data.get(field):
-                            errors.append(f"'{field}' is required")
+                
+                if request.method.lower() != 'get':
+                    assert callable(required_fields_res) or getattr(
+                        required_fields_res, "__iter__"
+                    ), "'get_required_fields' method must return an iterable or callable"
+                    if callable(required_fields_res):
+                        _, msg = required_fields_res(data)
+                        if not _:
+                            errors.append(msg)
+                    else:
+                        for field in self.get_required_fields():
+                            if not data.get(field):
+                                errors.append(f"'{field}' is required")
+                
                 if errors:
                     response = Response(
                         data={"errors": errors}, status=status.HTTP_400_BAD_REQUEST

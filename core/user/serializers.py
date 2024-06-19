@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from core.user.models import User, UserPersonality, AcademicGoal
-from decimal import Decimal, ROUND_HALF_UP
+from core.user.models import User, UserPersonality, AcademicGoal, UserCourse
 
 class Retrieve(serializers.ModelSerializer):
     class Meta:
@@ -32,4 +31,8 @@ class AcademicGoalSerializer(serializers.ModelSerializer):
         model = AcademicGoal
         fields = ['previous_session_gpa', 'expected_current_session_gpa']
     
+class CourseSerializer(serializers.ModelSerializer):
     
+    class Meta:
+        model = UserCourse
+        fields = "__all__"

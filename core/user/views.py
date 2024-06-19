@@ -1,8 +1,6 @@
 import re
 
 from django.conf import settings
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
 from rest_framework import viewsets, decorators, status, response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
@@ -12,10 +10,9 @@ from drf_spectacular.utils import extend_schema, OpenApiExample
 from core.user.models import User, AcademicGoal
 from core.user import serializers
 from core.utils.mixins import CustomRequestDataValidationMixin, CountListResponseMixin
-from core.user.models import UserSession
+from core.user.models import UserSession, UserCourse
 from core.utils import permissions, exceptions, google_oauth
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import NotFound
 
 """def receive_auth_test(request):
     print(request.data)
@@ -26,7 +23,7 @@ class AuthViewSet(
     CustomRequestDataValidationMixin, CountListResponseMixin, viewsets.ViewSet
 ):
     queryset = User.objects
-    #http_method_names = ["post", "get"]
+    # http_method_names = ["post", "get"]
     serializer_class = serializers.Retrieve
 
     def get_queryset(self):
@@ -173,16 +170,12 @@ class AuthViewSet(
             return response.Response(status=status.HTTP_200_OK, data=response_data)
 
     @extend_schema(request=serializers.SchoolUpdate())
-    @decorators.action(
-        detail=False,
-        methods=["patch"],
-        url_path="school-details"
-    )
+    @decorators.action(detail=False, methods=["patch"], url_path="school-details")
     def school_data(self, request, *args, **kwargs):
         """
         This endpoint updates school data for a user.
         """
-        
+
         serializer = serializers.SchoolUpdate(
             instance=request.user, data=request.data, partial=True
         )
@@ -195,7 +188,7 @@ class AuthViewSet(
 class UserPersonalityViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserPersonalitySerializer
-    http_method_names = ['post', 'get']
+    http_method_names = ["post", "get"]
 
     @extend_schema(
         examples=[
@@ -206,12 +199,9 @@ class UserPersonalityViewSet(viewsets.GenericViewSet):
                     "personality_test": "https://berserk-blood-majestic-mice-production.pipeops.app/personality-test",
                     "study_style": "At Night",
                     "other_activities": {
-                        "Gym": {
-                            "date": "10-10-2023",
-                            "time": "2:00pm"
-                        }
-                    }
-                }
+                        "Gym": {"date": "10-10-2023", "time": "2:00pm"}
+                    },
+                },
             ),
             OpenApiExample(
                 "Response example",
@@ -220,16 +210,13 @@ class UserPersonalityViewSet(viewsets.GenericViewSet):
                     "personality_test": "https://berserk-blood-majestic-mice-production.pipeops.app/personality-test",
                     "study_style": "At Night",
                     "other_activities": {
-                        "Gym": {
-                            "date": "10-10-2023",
-                            "time": "2:00pm"
-                        }
-                    }
-                }
-            )
+                        "Gym": {"date": "10-10-2023", "time": "2:00pm"}
+                    },
+                },
+            ),
         ]
     )
-    @decorators.action(detail=False, methods=['post'])
+    @decorators.action(detail=False, methods=["post"])
     def create_user_personality(self, request, *args, **kwargs):
         """Create user's personality"""
 
@@ -240,28 +227,26 @@ class UserPersonalityViewSet(viewsets.GenericViewSet):
         return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
     @extend_schema(
-    examples=[
-        OpenApiExample(
-            "Request example",
-            response_only=True,
-            value={
-                "personality_test": "https://berserk-blood-majestic-mice-production.pipeops.app/personality-test",
-                "study_style": "At Night",
-                "other_activities": {
-                    "Gym": {
-                        "date": "10-10-2023",
-                        "time": "2:00pm"
-                    }
-                }
-            }
-        ),
-    ])
-    @decorators.action(detail=False, methods=['get'])
+        examples=[
+            OpenApiExample(
+                "Request example",
+                response_only=True,
+                value={
+                    "personality_test": "https://berserk-blood-majestic-mice-production.pipeops.app/personality-test",
+                    "study_style": "At Night",
+                    "other_activities": {
+                        "Gym": {"date": "10-10-2023", "time": "2:00pm"}
+                    },
+                },
+            ),
+        ]
+    )
+    @decorators.action(detail=False, methods=["get"])
     def user_personality(self, request):
         """Retrieve user's personality"""
 
         user = request.user
-        user_personality = user.personality     
+        user_personality = user.personality
         serializer = self.get_serializer(instance=user_personality)
 
         return response.Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -270,8 +255,7 @@ class UserPersonalityViewSet(viewsets.GenericViewSet):
 class UserAcademyGoalViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.AcademicGoalSerializer
-    http_method_names = ['post', 'get']
-
+    http_method_names = ["post", "get"]
 
     @extend_schema(
         examples=[
@@ -280,20 +264,20 @@ class UserAcademyGoalViewSet(viewsets.GenericViewSet):
                 request_only=True,
                 value={
                     "previous_session_gpa": "3.29",
-                    "expected_current_session_gpa": "3.59"
-                }
+                    "expected_current_session_gpa": "3.59",
+                },
             ),
             OpenApiExample(
                 "Response example",
                 response_only=True,
-                value={    
+                value={
                     "previous_session_gpa": "3.29",
-                    "expected_current_session_gpa": "3.59"
-                }
-            )
+                    "expected_current_session_gpa": "3.59",
+                },
+            ),
         ]
     )
-    @decorators.action(detail=False, methods=['post'])
+    @decorators.action(detail=False, methods=["post"])
     def create_user_academic_goal(self, request, *args, **kwargs):
         """Create user's academic goal"""
 
@@ -303,11 +287,56 @@ class UserAcademyGoalViewSet(viewsets.GenericViewSet):
 
         return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
-    @decorators.action(detail=False, methods=['get'])
+    @decorators.action(detail=False, methods=["get"])
     def user_recent_academic_goal(self, request):
         """Retrieve user's recent academic goal"""
 
-        user_academy_goal = AcademicGoal.objects.filter(user=request.user).order_by('-date_added').first()
+        user_academy_goal = (
+            AcademicGoal.objects.filter(user=request.user)
+            .order_by("-date_added")
+            .first()
+        )
         serializer = self.get_serializer(instance=user_academy_goal)
 
         return response.Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class UserCourseViewset(
+    CustomRequestDataValidationMixin, viewsets.ViewSet
+):
+
+    queryset = UserCourse.objects
+    http_method_names = ["get", "post"]
+    serializer_class = serializers.CourseSerializer
+
+    def get_queryset(self):
+        return self.queryset.all()
+
+    def get_required_fields(self):
+        if self.action == "courses_dashboard":
+            return [
+                "semester",
+                "duration",
+                "course_title",
+                "course_code",
+                "unit_load",
+                "knowledge",
+                "uploaded_course",
+            ]
+        return []
+
+    def get_permissions(self):
+        return super().get_permissions()
+
+    @decorators.action(detail=False, methods=["get", "post"], url_path="courses")
+    def courses_dashboard(self, request, *args, **kwargs):
+        if self.request.method == "GET":
+            courses = self.queryset.filter(user=request.user)
+            serializer = self.serializer_class(courses, many=True)
+            return response.Response(serializer.data, status.HTTP_200_OK)
+        if self.request.method == "POST":
+            _instance  = self.queryset.create(**request.data)
+            serializer = serializers.CourseSerializer(_instance)
+            return response.Response(
+                status=status.HTTP_201_CREATED, data=serializer.data
+            )
