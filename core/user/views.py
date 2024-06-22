@@ -335,8 +335,12 @@ class UserCourseViewset(
             serializer = self.serializer_class(courses, many=True)
             return response.Response(serializer.data, status.HTTP_200_OK)
         if self.request.method == "POST":
-            _instance  = self.queryset.create(**request.data)
-            serializer = serializers.CourseSerializer(_instance)
+            data = request.data.copy()
+            data['user'] =  self.request.user
+            self.queryset.create(**data)
+            user_courses = self.queryset.filter(user=request.user)
+            serializer = self.serializer_class(user_courses,many=True)
             return response.Response(
-                status=status.HTTP_201_CREATED, data=serializer.data
+                serializer.data,
+                status=status.HTTP_201_CREATED
             )
